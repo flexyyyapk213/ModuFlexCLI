@@ -16,7 +16,7 @@
 
 import flet as ft
 
-class ModuFlexCLI:
+class ModuFlexGUI:
     def __init__(self, page: ft.Page) -> None:
         self.page = page
         self.page.title = "ModuFlexGUI"
@@ -61,4 +61,4 @@ class ModuFlexCLI:
         return ft.View(route=e.route, controls=[ft.Text(value='Unknown route. Please, go to the main page.')])
 
 if __name__ == "__main__":
-    ft.run(ModuFlexCLI, view=ft.AppView.WEB_BROWSER)
+    ft.run(ModuFlexGUI, view=ft.AppView.WEB_BROWSER)
