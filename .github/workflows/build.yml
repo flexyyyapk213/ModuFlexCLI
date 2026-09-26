@@ -1,9 +1,11 @@
 name: Build Android APK
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [created, published]
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -27,14 +29,28 @@ jobs:
         with:
           channel: "stable"
 
-      - name: Install Flet
-        run: pip install flet
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flet
 
       - name: Build APK
         run: flet build apk -y
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Rename APk with Date and Build number
+        run: |
+          BUILD_DATE=$(date +'%Y-%m-%d')
+          BUILD_NUM="${{ github.run_number }}"
+          NEW_NAME="ModuFlexCLI-b${BUILD_NUM}_${BUILD_DATE}.apk"
+
+          mkdir -p release_apk
+          cp build/apk/*.apk "release_apk/${NEW_NAME}"
+
+          echo "APK_FILE_PATH=release_apk/${NEW_NAME}" >> $GITHUB_ENV
+
+      - name: Upload APK to created Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: app-release
-          path: build/apk/*.apk
+          files: ${{ env.APK_FILE_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
