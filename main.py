@@ -41,7 +41,7 @@ class ModuFlexCLI:
         self.page.route = top_view.route
     
     def main_room(self) -> ft.View:
-        return ft.View(route='/', controls=[ft.Text(value='Hello from ModuFlexUI')])
+        return ft.View(route='/', controls=[ft.Text(value='Hello from ModuFlexGUI')])
     
     def route_change(self, e: ft.RouteChangeEvent):
         self.page.views.clear()
