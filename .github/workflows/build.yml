@@ -34,23 +34,33 @@ jobs:
           python -m pip install --upgrade pip
           pip install flet
 
-      - name: Build APK
+      - name: Build universal APK
         run: flet build apk --yes
 
-      - name: Rename APk with Date and Build number
+      - name: Save Universal APK
         run: |
           BUILD_DATE=$(date +'%Y-%m-%d')
           BUILD_NUM="${{ github.run_number }}"
-          NEW_NAME="ModuFlexCLI-b${BUILD_NUM}_${BUILD_DATE}.apk"
-
           mkdir -p release_apk
-          cp build/apk/*.apk "release_apk/${NEW_NAME}"
 
-          echo "APK_FILE_PATH=release_apk/${NEW_NAME}" >> $GITHUB_ENV
+          cp build/apk/*.apk "release_apk/ModuFlexUI-b${BUILD_NUM}_${BUILD_DATE}-universal.apk"
 
-      - name: Upload APK to created Release
+      - name: Build Split APKs
+        run: flet build apk --yes --split-per-abi
+
+      - name: Save Split APKs
+        run: |
+          BUILD_DATE=$(date +'%Y-%m-%d')
+          BUILD_NUM="${{ github.run_number }}"
+
+          for apk in build/apk/*.apk; do
+            filename=$(basename "$apk")
+            cp "$apk" "release_apk/ModuFlexUI-b${BUILD_NUM}_${BUILD_DATE}-${filename}"
+          done
+
+      - name: Upload APKs to created Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ env.APK_FILE_PATH }}
+          files: release_apk/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,4 @@
-# ModuFlexCLI
+# ModuFlexUI
 # Copyright (C) 2026 flexyyyapk213
 
 # This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ import flet as ft
 class ModuFlexCLI:
     def __init__(self, page: ft.Page) -> None:
         self.page = page
-        self.page.title = "ModuFlexCLI"
+        self.page.title = "ModuFlexGUI"
         self.page.theme_mode = ft.ThemeMode.DARK
 
         self.page.on_view_pop = self.view_pop
@@ -41,7 +41,7 @@ class ModuFlexCLI:
         self.page.route = top_view.route
     
     def main_room(self) -> ft.View:
-        return ft.View(route='/', controls=[ft.Text(value='Hello from ModuFlexCLI')])
+        return ft.View(route='/', controls=[ft.Text(value='Hello from ModuFlexUI')])
     
     def route_change(self, e: ft.RouteChangeEvent):
         self.page.views.clear()
