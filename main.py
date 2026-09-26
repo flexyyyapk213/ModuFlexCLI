@@ -14,4 +14,51 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-print("Hello ModuFlexCLI")
+import flet as ft
+
+class ModuFlexCLI:
+    def __init__(self, page: ft.Page) -> None:
+        self.page = page
+        self.page.title = "ModuFlexCLI"
+        self.page.theme_mode = ft.ThemeMode.DARK
+
+        self.page.on_view_pop = self.view_pop
+        self.page.on_route_change = self.route_change
+
+        self.busy_views = {}
+        self.rooms = {
+            "/": self.main_room
+        }
+
+        self.page.route = '/'
+        self.page.views.append(self.main_room())
+        self.page.update()
+    
+    def view_pop(self, e):
+        self.page.views.pop()
+        
+        top_view = self.page.views[-1]
+        self.page.route = top_view.route
+    
+    def main_room(self) -> ft.View:
+        return ft.View(route='/', controls=[ft.Text(value='Hello from ModuFlexCLI')])
+    
+    def route_change(self, e: ft.RouteChangeEvent):
+        self.page.views.clear()
+        
+        route = e.route
+        if self.busy_views.get(route) is None and self.rooms.get(route) is not None:
+            self.busy_views[route] = self.rooms[route]
+        else:
+            self.page.views.append(self.unknown_route(e))
+            self.page.update()
+            return
+        
+        self.page.views.append(self.busy_views[route]())
+        self.page.update()
+    
+    def unknown_route(self, e: ft.RouteChangeEvent):
+        return ft.View(route=e.route, controls=[ft.Text(value='Unknown route. Please, go to the main page.')])
+
+if __name__ == "__main__":
+    ft.run(ModuFlexCLI, view=ft.AppView.WEB_BROWSER)
